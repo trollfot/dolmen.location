@@ -25,8 +25,8 @@ def root_path(context, request, absolute=False):
 def resolve_url(context, request, name):
 
     if context is None:
-        return root_path(context, request, name==ABSOLUTE)
-    
+        return root_path(context, request, name == ABSOLUTE)
+
     # first try to get the __parent__ of the object, no matter whether
     # it provides ILocation or not. If this fails, look up an ILocation
     # adapter. This will always work, as a general ILocation adapter
@@ -42,8 +42,8 @@ def resolve_url(context, request, name):
         container = context.__parent__
 
     if container is None:
-        return root_path(context, request, name==ABSOLUTE)
-        
+        return root_path(context, request, name == ABSOLUTE)
+
     url = getMultiAdapter((container, request), IURLResolver, name=name)
 
     name = getattr(context, '__name__', None)
@@ -54,7 +54,6 @@ def resolve_url(context, request, name):
         url += '/' + urllib.quote(name.encode('utf-8'), _safe)
 
     return url
-    
 
 
 def absolute_url(context, request):
@@ -67,7 +66,7 @@ def relative_url(context, request):
 
 def get_absolute_url(context, request):
     return getMultiAdapter((context, request), IURLResolver, name=ABSOLUTE)
-    
+
 
 def get_relative_url(context, request):
     return getMultiAdapter((context, request), IURLResolver, name=RELATIVE)

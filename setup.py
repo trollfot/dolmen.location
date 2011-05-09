@@ -4,29 +4,34 @@ import os
 version = '0.1'
 
 install_requires = [
+    'cromlech.browser',
     'cromlech.io',
+    'grokcore.component',
     'setuptools',
+    'zope.component',
     'zope.interface',
     'zope.location',
     ]
 
 tests_require = [
-    'cromlech.webob',
+    'cromlech.browser [test]',
     'grokcore.component',
+    'pytest',
+    'zope.testing',
     ]
 
 setup(name='dolmen.location',
       version=version,
-      description="",
+      description="URL computing using locatability (``zope.location``)",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
         "Programming Language :: Python",
         ],
-      keywords='',
-      author='',
-      author_email='',
-      url='',
+      keywords='Dolmen Location',
+      author='The Dolmen team',
+      author_email='dolmen@list.dolmen-project.org',
+      url='http://gitweb.dolmen-project.org/',
       license='ZPL',
       packages=find_packages('src', exclude=['ez_setup']),
       package_dir={'': 'src'},
