@@ -23,10 +23,6 @@ def root_path(context, request, absolute=False):
 
 
 def resolve_url(context, request, name):
-
-    if context is None:
-        return root_path(context, request, name == ABSOLUTE)
-
     # first try to get the __parent__ of the object, no matter whether
     # it provides ILocation or not. If this fails, look up an ILocation
     # adapter. This will always work, as a general ILocation adapter

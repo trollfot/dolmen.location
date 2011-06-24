@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1a2 (2011-06-24)
+------------------
+
+- Removed silly non-existing context handling.
+
+
 0.1a1 (2011-05-09)
 ------------------
 
