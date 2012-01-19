@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.1 (2012-01-19)
+----------------
+
+- Updated for the latest `cromlech` packages.
+
+- Added 'lineage' computing functions, for locatable items.
+
+
 0.1a2 (2011-06-24)
 ------------------
 

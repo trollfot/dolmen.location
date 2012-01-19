@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.1a2'
+version = '0.1'
 
 install_requires = [
-    'cromlech.browser >= 0.3a2',
-    'cromlech.io >= 0.2a1',
+    'cromlech.io',
+    'cromlech.browser >= 0.4',
     'grokcore.component',
     'setuptools',
     'zope.component',
@@ -14,6 +14,7 @@ install_requires = [
     ]
 
 tests_require = [
+    'cromlech.browser [test]',
     'grokcore.component',
     'pytest',
     'zope.testing',

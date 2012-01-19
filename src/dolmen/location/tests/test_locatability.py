@@ -1,9 +1,10 @@
+
 """dolmen.location tests
 """
 import pytest
 import dolmen.location
 import grokcore.component
-from cromlech.io.testing import TestRequest
+from cromlech.browser.testing import TestHTTPRequest
 from zope.location import Location
 from zope.testing.cleanup import cleanUp
 from cromlech.io import IPublicationRoot
@@ -21,7 +22,7 @@ def teardown_module(module):
 def test_locatability():
     """For a simple scenario : /obj:grandfather/obj:father/obj:me
     """
-    request = TestRequest(path='/somepath')
+    request = TestHTTPRequest(path='/somepath')
     grandfather = Location()
     father = Location()
     me = Location()
@@ -48,3 +49,46 @@ def test_locatability():
         "http://localhost/Krao/Grok")
 
     assert dolmen.location.get_relative_url(me, request) == "/Krao/Grok"
+
+
+def test_lineage_chain():
+
+   elder = Location()
+   
+   old = Location()
+   old.__parent__ = elder
+
+   mature = Location()
+   mature.__parent__ = old
+
+   young = Location()
+   young.__parent__ = mature
+   
+   baby = Location()
+   baby.__parent__ = young
+
+   from types import GeneratorType
+   iterable = dolmen.location.lineage(baby)
+   assert type(iterable) == GeneratorType
+
+   chain = list(iterable)
+   assert chain == [baby, young, mature, old, elder]
+   assert chain == dolmen.location.lineage_chain(baby)
+
+
+def test_lineage_infinite_loop():
+
+    paul = Location()
+    isabel = Location()
+    juliana = Location()
+
+    # Love triangle !
+    juliana.__parent__ = paul
+    paul.__parent__ = isabel
+    isabel.__parent__ = paul
+    
+    with pytest.raises(LookupError) as e:
+        dolmen.location.lineage_chain(juliana)
+    assert str(e.value.message) == (
+        'The lineage chain could not be completed. ' +
+        'An infinite loop as been detected')

@@ -5,8 +5,8 @@ from zope.location import ILocation
 from zope.interface import Interface
 from zope.component import getMultiAdapter
 
-from cromlech.io.interfaces import IRequest, IPublicationRoot
-from cromlech.browser.interfaces import IURLResolver
+from cromlech.io.interfaces import IPublicationRoot
+from cromlech.browser.interfaces import IHTTPRequest, IURLResolver
 
 
 _safe = '@+'  # Characters that we don't want to have quoted
@@ -71,8 +71,8 @@ def get_relative_url(context, request):
 try:
     from grokcore.component import global_adapter
     global_adapter(
-        absolute_url, (Interface, IRequest), IURLResolver, name=ABSOLUTE)
+        absolute_url, (Interface, IHTTPRequest), IURLResolver, name=ABSOLUTE)
     global_adapter(
-        relative_url, (Interface, IRequest), IURLResolver, name=RELATIVE)
+        relative_url, (Interface, IHTTPRequest), IURLResolver, name=RELATIVE)
 except ImportError:
     pass
