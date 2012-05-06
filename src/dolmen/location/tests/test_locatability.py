@@ -4,11 +4,11 @@
 import pytest
 import dolmen.location
 import grokcore.component
-from cromlech.browser.testing import TestHTTPRequest
+from cromlech.browser import IPublicationRoot
+from cromlech.browser.testing import TestRequest
+from zope.interface import directlyProvides
 from zope.location import Location
 from zope.testing.cleanup import cleanUp
-from cromlech.io import IPublicationRoot
-from zope.interface import directlyProvides
 
 
 def setup_module(module):
@@ -22,7 +22,7 @@ def teardown_module(module):
 def test_locatability():
     """For a simple scenario : /obj:grandfather/obj:father/obj:me
     """
-    request = TestHTTPRequest(path='/somepath')
+    request = TestRequest(path='/somepath')
     grandfather = Location()
     father = Location()
     me = Location()
@@ -47,8 +47,6 @@ def test_locatability():
     directlyProvides(grandfather, IPublicationRoot)
     assert dolmen.location.get_absolute_url(me, request) == (
         "http://localhost/Krao/Grok")
-
-    assert dolmen.location.get_relative_url(me, request) == "/Krao/Grok"
 
 
 def test_lineage_chain():

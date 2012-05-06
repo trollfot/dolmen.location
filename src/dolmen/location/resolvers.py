@@ -2,27 +2,15 @@
 
 import urllib
 from zope.location import ILocation
-from zope.interface import Interface
+from zope.interface import Interface, implementer
 from zope.component import getMultiAdapter
-
-from cromlech.io.interfaces import IPublicationRoot
-from cromlech.browser.interfaces import IHTTPRequest, IURLResolver
-
+from cromlech.browser import IPublicationRoot, IRequest, IURL
 
 _safe = '@+'  # Characters that we don't want to have quoted
 
-ABSOLUTE = u"absolute"
-RELATIVE = u"relative"
 
-
-def root_path(context, request, absolute=False):
-    if IPublicationRoot.providedBy(context):
-        return request.application_url if absolute is True else ''
-    raise LookupError(
-        'The path of the application root could not be resolved.')
-
-
-def resolve_url(context, request, name):
+@implementer(IURL)
+def resolve_url(context, request):
     # first try to get the __parent__ of the object, no matter whether
     # it provides ILocation or not. If this fails, look up an ILocation
     # adapter. This will always work, as a general ILocation adapter
@@ -38,9 +26,12 @@ def resolve_url(context, request, name):
         container = context.__parent__
 
     if container is None:
-        return root_path(context, request, name == ABSOLUTE)
+        if IPublicationRoot.providedBy(context):
+            return request.application_url
+        raise LookupError(
+            'The path of the application root could not be resolved.')
 
-    url = getMultiAdapter((container, request), IURLResolver, name=name)
+    url = getMultiAdapter((container, request), IURL)
 
     name = getattr(context, '__name__', None)
     if name is None:
@@ -52,27 +43,12 @@ def resolve_url(context, request, name):
     return url
 
 
-def absolute_url(context, request):
-    return resolve_url(context, request, name=ABSOLUTE)
-
-
-def relative_url(context, request):
-    return resolve_url(context, request, name=RELATIVE)
-
-
 def get_absolute_url(context, request):
-    return getMultiAdapter((context, request), IURLResolver, name=ABSOLUTE)
-
-
-def get_relative_url(context, request):
-    return getMultiAdapter((context, request), IURLResolver, name=RELATIVE)
+    return getMultiAdapter((context, request), IURL)
 
 
 try:
     from grokcore.component import global_adapter
-    global_adapter(
-        absolute_url, (Interface, IHTTPRequest), IURLResolver, name=ABSOLUTE)
-    global_adapter(
-        relative_url, (Interface, IHTTPRequest), IURLResolver, name=RELATIVE)
+    global_adapter(resolve_url, (Interface, IRequest))
 except ImportError:
     pass
