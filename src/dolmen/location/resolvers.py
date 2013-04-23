@@ -3,7 +3,6 @@
 import urllib
 from zope.location import ILocation
 from zope.interface import Interface, implementer
-from zope.component import getMultiAdapter
 from cromlech.browser import IPublicationRoot, IRequest, IURL
 
 _safe = '@+'  # Characters that we don't want to have quoted
@@ -31,7 +30,7 @@ def resolve_url(context, request):
         raise LookupError(
             'The path of the application root could not be resolved.')
 
-    url = getMultiAdapter((container, request), IURL)
+    url = IURL(container, request)
 
     name = getattr(context, '__name__', None)
     if name is None:
@@ -43,12 +42,13 @@ def resolve_url(context, request):
     return url
 
 
-def get_absolute_url(context, request):
-    return getMultiAdapter((context, request), IURL)
-
-
 try:
-    from grokcore.component import global_adapter
-    global_adapter(resolve_url, (Interface, IRequest))
+    import crom
+
+    @crom.adapter
+    @crom.sources(Interface, IRequest)
+    @crom.target(IURL)
+    def get_absolute_url(context, request):
+        return resolve_url(context, request)
 except ImportError:
     pass
